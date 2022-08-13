@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/dangdang-book-export.iml" filepath="$PROJECT_DIR$/.idea/dangdang-book-export.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dangdang-download/dangdang-d.iml" filepath="$PROJECT_DIR$/dangdang-download/dangdang-d.iml" />
+    </modules>
+  </component>
+</project>

@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>${title}</title>
+
+    <style>
+        @page {
+            margin: 0;
+            padding: 0;
+            size: 5in 6.674in;
+        }
+        html, body {
+            padding: 0;
+            margin: 0;
+        }
+        body {
+            background-color: #44454A;
+        }
+        .read-box {
+            width: 660px;
+            margin: 0 auto;
+        }
+        .read-box .read-item {
+            height: 880px;
+            position: relative;
+            background-color: #fff;
+        }
+        .read-box.read-mode .read-item  {
+            margin-bottom: 10px;
+        }
+        .button {
+            position: fixed;
+            left: 50%;
+            top: 200px;
+            margin-left: -460px;
+            text-align: right;
+        }
+        .button button {
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <div class="read-box" :class="mode">
+        <div class="chapter-wrap">
+            <div
+                class="read-item"
+                v-for="(item2, index) in book"
+                v-html="item2.chapterInfo.snippet"
+                :key="index">
+            </div>
+        </div>
+    </div>
+
+    <div class="button">
+        <div>
+            <button @click="print" v-show="mode === 'read-mode'">打印/另存pdf</button>
+        </div>
+        <div>
+            <button @click="readMode" v-show="mode === 'print-mode'">阅读模式</button>
+        </div>
+    </div>
+</div>
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js"></script>
+<script src="./data/${dataName}"></script>
+<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script>
+  window.book.children.forEach((item)=>{
+    item.chapterInfo = JSON.parse(item.chapterInfo)
+  })
+  new Vue({
+    el: '#app',
+    data() {
+      return {
+        book: window.book.children || [],
+        mode: 'read-mode'
+      }
+    }, created() {
+		  var that = this
+          var beforePrint = function () {
+              console.log('Functionality to run before printing.');
+              that.roll();
+          };
+          if (window.matchMedia) {
+              var mediaQueryList = window.matchMedia('print');
+              mediaQueryList.addListener(function (mql) {
+                  if (mql.matches) {
+                      beforePrint();
+                  }
+              });
+          }
+          window.onbeforeprint = beforePrint;
+      },
+    methods: {
+     // 重新排序
+     roll() {
+        var divs = $('.read-item')
+        for (var i = 0; i < divs.length; i++) {
+          var spans = divs[i].querySelectorAll("span")
+		  if (spans.length == 0) {
+			continue;
+		  }
+          var style = divs[i].querySelectorAll("style")
+          var parent = spans[0].parentNode
+          parent.innerHTML = ""
+          var newSpans = []
+          for (var j = 0; j < spans.length; j ++) {
+            newSpans.push({span: spans[j], left: this.parseInt(spans[j].style['left']), bottom: this.parseInt(spans[j].style['bottom'])})
+          }
+          newSpans.sort((a, b) => {
+            if (a.bottom == b.bottom) {
+              return a.left - b.left
+            } else {
+              return b.bottom - a.bottom
+            }
+          })
+
+          parent.append(style[0])
+          for (var j = 0; j < newSpans.length; j ++) {
+            parent.append(newSpans[j].span);
+          }
+        }
+      },
+      parseInt(px) {
+        return Number(px.slice(0, px.indexOf('px')))
+      },
+      print() {
+        this.mode = 'print-mode'
+
+        setTimeout(()=>{
+          this.roll();
+          window.print()
+        }, 300)
+      },
+      readMode() {
+        this.mode = 'read-mode'
+      },
+      parseHtml(html) {
+        console.log(html)
+        return html
+      }
+    }
+  })
+</script>
+</html>
