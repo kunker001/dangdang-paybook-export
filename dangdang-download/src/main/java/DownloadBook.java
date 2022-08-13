@@ -15,7 +15,7 @@ public class DownloadBook {
     /**
      * token
      */
-    public static String token = "pc_fbc435477cd09a6ad70d9049a3790e331b7cfafdcd08c2460fa5fc782f8a40dd";
+    public static String token = "token";
 
     public static List<String> ignoreBookList = new ArrayList<String>(){{
         add("佛教艺术经典(全三册)");
